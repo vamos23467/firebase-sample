@@ -1,0 +1,73 @@
+body {
+    padding-bottom: 20%;
+    background-image: url(./../img/recog.png);
+}
+
+#result-div {
+    margin-top : 100px ;
+    display: inline-block;
+    height: 240px;
+	white-space: nowrap;
+    background-position: center;
+}
+
+#result-text {
+    margin-top : 0px ;
+    overflow: hidden; 
+    height: 240px;
+    width: 100%;
+    color: black;
+    white-space: nowrap;
+}
+
+#span-res {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 0%;
+    width: 120%;
+    font-size:  10em;
+    margin:0;
+    display : inline-block;
+    white-space : nowrap;
+    overflow: hidden;
+    line-height: 1.4;   
+}
+
+.animation {
+
+    -webkit-animation-name: marquee;
+	-webkit-animation-timing-function: linear;
+	-webkit-animation-iteration-count: 1;
+	-webkit-animation-duration: 7s;
+	-moz-animation-name: marquee;
+	-moz-animation-timing-function: linear;
+	-moz-animation-iteration-count: 1;
+	-moz-animation-duration: 7s;
+    
+    /* animation:  type 2s steps(13, end) 1000ms ease-in; */
+    /* animation:  type 6s linear; */
+	animation-name: marquee;
+	animation-timing-function: linear;
+	animation-iteration-count: 1;
+	animation-duration: 7s;
+    animation-fill-mode: forwards;
+}
+
+
+@-webkit-keyframes marquee {
+  from   { -webkit-transform: translate(0%);}
+  99%,to { -webkit-transform: translate(-100%);}
+}
+@-moz-keyframes marquee {
+  from   { -moz-transform: translate(0%);}
+  99%,to { -moz-transform: translate(-100%);}
+}
+@keyframes marquee {
+    
+  from   { transform: translate(0%);}
+  99%,to { transform: translate(-100%);
+  }
+} 
+
+/*0% {left:120%;}アニメの開始時は画面から見えない位置にある*/
+/*100% {left:-30%;}画面右から出てきてアニメ終了後に左画面上から消える

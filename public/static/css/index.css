@@ -1,0 +1,11 @@
+body {
+    text-align:  center;    /* 文字中央寄せ */
+    padding:  0px;        /* 余白指定 */
+    /* border: solid 2px;      枠線指定 */
+    background-image: url(./../img/start.png);
+    background-repeat: no-repeat;
+    background-size: auto;  /* sleect cover or auto */
+    background-position: center;
+    bottom: 80px;
+    
+}
