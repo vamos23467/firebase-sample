@@ -201,9 +201,6 @@ recognition.onresult = (event) => {
         }else{
           resRes.innerHTML += result;
         }
-        // $('#span-res').removeClass("animation");
-        // $('#span-res').addClass("animation");
-        //$(".animation").animate( { duration: 120000, easing: 'linear', queue: true } ).delay(2000);
       }else{
         resRes.innerHTML = result;
         //初期化
