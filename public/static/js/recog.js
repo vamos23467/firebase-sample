@@ -1,7 +1,6 @@
 const resText = document.querySelector('#result-text');
 const resRes = document.querySelector('#span-res');
 
-let finalTranscript = ''; // 確定した(黒の)認識結果
 let neko_flag = false;
 let finish_flag = false;
 let anime_flag = false;
@@ -166,8 +165,9 @@ function searchFinishWord(transcript, word_list){
   return false;
 }
 
-recognition.onresult = (event) => {
+let animation_text;
 
+recognition.onresult = (event) => {
   let transcript;
   let emoji_res;
   let emoji;
@@ -177,9 +177,6 @@ recognition.onresult = (event) => {
     console.log(event.results[i].isFinal);
     if (event.results[i].isFinal) {
       recognition.stop()
-      //初期化
-      $('#span-res').removeClass("animation");
-      $('#span-res').css('padding-left','0%');
 
       finish_flag = searchFinishWord(transcript, finish_word);
       //finalTranscript = transcript;
@@ -199,17 +196,27 @@ recognition.onresult = (event) => {
 
       //animationが動いている時は、現在の文字に付け足す
       if (anime_flag){
-        resRes.innerHTML += result;
+        if (transcript.length >= 10){
+          animation_text += result;
+        }else{
+          resRes.innerHTML += result;
+        }
+        // $('#span-res').removeClass("animation");
+        // $('#span-res').addClass("animation");
+        //$(".animation").animate( { duration: 120000, easing: 'linear', queue: true } ).delay(2000);
       }else{
         resRes.innerHTML = result;
+        //初期化
+        $('#span-res').removeClass("animation");
+        $('#span-res').css('padding-left','0%');
       }
       let moji_count = transcript.length+num;
       console.log(resRes.clientWidth);
       console.log((transcript.length+num));
       //取得した文字数
-      if(moji_count >= 12){
+      if(moji_count >= 12 && !anime_flag){
         $('#span-res').addClass("animation");
-        $('#span-res').css('padding-left','100%');
+        $('#span-res').css('padding-left','20%');
 
       //   if(moji_count >= 12 && moji_count < 16){
       //     $(".animation").animate( { duration: 10000, easing: 'linear' } );
@@ -229,28 +236,34 @@ recognition.onresult = (event) => {
 
         //速さを変更
         if(moji_count >= 12 && moji_count < 16){
-          $(".animation").animate( { duration: 12000, easing: 'linear' } );
+          $(".animation").animate( { duration: 12000, easing: 'linear',queue: true } );
         }else if(moji_count >= 16 && moji_count < 20){
-          $(".animation").animate( { duration: 16000, easing: 'linear' } );
+          $(".animation").animate( { duration: 16000, easing: 'linear',queue: true } );
         }else if(moji_count >= 20 && moji_count < 27){
-          $(".animation").animate({ duration: 27000, easing: 'linear' } );
+          $(".animation").animate({ duration: 27000, easing: 'linear',queue: true } );
         }else if(moji_count >= 27 && moji_count < 33){
-          $(".animation").animate({ duration: 33000, easing: 'linear' } );
+          $(".animation").animate({ duration: 33000, easing: 'linear', queue: true } );
         }else if(moji_count >= 33 && moji_count < 37){
-          $(".animation").animate({ duration: 43000, easing: 'linear' } );
+          $(".animation").animate({ duration: 43000, easing: 'linear', queue: true } );
         }else{
-          $(".animation").animate({ duration: 50000, easing: 'linear' } );
+          $(".animation").animate({ duration: 50000, easing: 'linear', queue: true } );
         }
         anime_flag = true;
       }else{
-        $('#span-res').removeClass("animation");
-        $('#span-res').css('padding-left','0%');
-        anime_flag = false;
+        if (anime_flag){
+        }else{
+          $('#span-res').removeClass("animation");
+          $('#span-res').css('padding-left','0%');
+          anime_flag = false;
+        }
       }
 
     } else {
-      //interimTranscript = transcript;
-      //transcript = "~~~~~~~~~~";
+      if(transcript.length >= 13 && !anime_flag){
+        resRes.innerHTML = '<i style="color:#ddd;">' + transcript + '</i>';
+        //interimTranscript = transcript;
+        //transcript = "~~~~~~~~~~";
+      }
     }
   }
   console.log(transcript);
@@ -259,11 +272,20 @@ recognition.onresult = (event) => {
 //animation終了時に文字を消す
 resRes.addEventListener('animationend', () => {
   // アニメーション終了後に実行する内容
-  emoji_res = "";
-  $('#span-res').removeClass("animation");
-  $('#span-res').css('padding-left','0%');
-  resRes.innerHTML = "";
-  anime_flag = false;
+  console.log("animation end");
+  //アニメーション実行中に入力された場合の処理
+  if (anime_flag && animation_text){
+    resRes.innerHTML = animation_text;
+    $('#span-res').addClass("animation");
+    $(".animation").animate( { duration: 12000, easing: 'linear',queue: true } );
+  }else{
+    $('#span-res').removeClass("animation");
+    $('#span-res').css('padding-left','30%');
+    resRes.innerHTML = "";
+    emoji_res = "";
+    anime_flag = false;
+    animation_text = "";
+  }
 })
 
 recognition.start();
@@ -308,13 +330,13 @@ recognition.onerror = () =>
 
 recognition.onnomatch = () =>
 {
-  
+  resRes.innerHTML = "認識できません"+"🙇‍♂";
 };
 
 
 recognition.onspeechend = () =>
 {
-  //console.log("On no match is called");
+  console.log("On no sppechend is called");
   // try{
   //     recognition.stop();
   //     recognition.start();
