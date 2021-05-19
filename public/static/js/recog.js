@@ -196,12 +196,13 @@ recognition.onresult = (event) => {
 
       //animationが動いている時は、現在の文字に付け足す
       if (anime_flag){
-        if (transcript.length >= 10){
-          animation_text += result;
-        }else{
-          resRes.innerHTML += result;
-        }
+        const newSpan = document.createElement("span");
+        newSpan.innerHTML = result;
+		    resText.appendChild(newSpan);
+        newSpan.classList.add("new-span");
+        newSpan.classList.add("animation");
       }else{
+        $('span').remove()
         resRes.innerHTML = result;
         //初期化
         $('#span-res').removeClass("animation");
@@ -249,6 +250,7 @@ recognition.onresult = (event) => {
       }else{
         if (anime_flag){
         }else{
+          $('span').remove()
           $('#span-res').removeClass("animation");
           $('#span-res').css('padding-left','0%');
           anime_flag = false;
@@ -269,20 +271,15 @@ recognition.onresult = (event) => {
 //animation終了時に文字を消す
 resRes.addEventListener('animationend', () => {
   // アニメーション終了後に実行する内容
-  console.log("animation end");
-  //アニメーション実行中に入力された場合の処理
-  if (anime_flag && animation_text){
-    resRes.innerHTML = animation_text;
-    $('#span-res').addClass("animation");
+  if (resText.hasChildNodes() && anime_flag){
     $(".animation").animate( { duration: 12000, easing: 'linear',queue: true } );
-  }else{
-    $('#span-res').removeClass("animation");
-    $('#span-res').css('padding-left','30%');
-    resRes.innerHTML = "";
-    emoji_res = "";
-    anime_flag = false;
-    animation_text = "";
+	}else if(resText.hasChildNodes() && !anime_flag){
+    $('span').remove();
   }
+  console.log("animation end");
+  $('#span-res').css('padding-left','30%');
+  emoji_res = "";
+  anime_flag = false;
 })
 
 recognition.start();

@@ -32,6 +32,18 @@ body {
     line-height: 1.4;
 }
 
+.new-span{
+    padding: 0px;
+    margin: 0px;
+    width: 100%;
+    /* width: 120%; */
+    font-size:  10em;
+    display : inline-block;
+    white-space : nowrap;
+    overflow: visible;
+    line-height: 1.4;
+}
+
 .animation {
 
     -webkit-animation-name: marquee;
