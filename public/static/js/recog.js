@@ -207,9 +207,9 @@ recognition.onresult = (event) => {
       console.log(resRes.clientWidth);
       console.log((transcript.length+num));
       //取得した文字数
-      // if(moji_count >= 12){
-      //   $('#span-res').addClass("animation");
-      //   $('#span-res').css('padding-left','100%');
+      if(moji_count >= 12){
+        $('#span-res').addClass("animation");
+        $('#span-res').css('padding-left','100%');
 
       //   if(moji_count >= 12 && moji_count < 16){
       //     $(".animation").animate( { duration: 10000, easing: 'linear' } );
