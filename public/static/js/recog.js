@@ -1,7 +1,6 @@
 const resText = document.querySelector('#result-text');
 const resRes = document.querySelector('#span-res');
 
-let finalTranscript = ''; // 確定した(黒の)認識結果
 let neko_flag = false;
 let finish_flag = false;
 let found_word = "みつけた";
@@ -206,10 +205,7 @@ function searchFinishWord(transcript, word_list){
   return false;
 }
 
-
-
 recognition.onresult = (event) => {
-
   let transcript;
   let emoji_res;
   let emoji;
@@ -219,9 +215,6 @@ recognition.onresult = (event) => {
     console.log(event.results[i].isFinal);
     if (event.results[i].isFinal) {
       recognition.stop()
-      //初期化
-      $('#span-res').removeClass("animation");
-      $('#span-res').css('padding-left','0%');
 
       finish_flag = searchFinishWord(transcript, finish_word);
       //finalTranscript = transcript;
@@ -272,13 +265,15 @@ recognition.onresult = (event) => {
         $('#span-res').removeClass("animation");
         $('#span-res').css('padding-left','0%');
       }
+
+      
       let moji_count = transcript.length+num;
       console.log(resRes.clientWidth);
       console.log((transcript.length+num));
       //取得した文字数
       if(moji_count >= 12 && !anime_flag){
         $('#span-res').addClass("animation");
-        $('#span-res').css('padding-left','100%');
+        $('#span-res').css('padding-left','20%');
 
         //速さを変更
         if(moji_count >= 12 && moji_count < 16){
@@ -374,13 +369,13 @@ recognition.onerror = () =>
 
 recognition.onnomatch = () =>
 {
-  
+  resRes.innerHTML = "認識できません"+"🙇‍♂";
 };
 
 
 recognition.onspeechend = () =>
 {
-  //console.log("On no match is called");
+  console.log("On no sppechend is called");
   // try{
   //     recognition.stop();
   //     recognition.start();
