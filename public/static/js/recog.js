@@ -4,6 +4,8 @@ const resRes = document.querySelector('#span-res');
 let finalTranscript = ''; // 確定した(黒の)認識結果
 let neko_flag = false;
 let finish_flag = false;
+let found_word = "みつけた";
+let found_index = 0;
 
 const finish_word = ['終了','妹オフ','いいのオフ','芋オフ','いーもオフ','えもオフ','えーもオフ','えーオフ','イーオフ','フィニッシュ','終わり'];
  
@@ -74,6 +76,7 @@ const good_hand = ['&#x1f44c;','&#x1f91f;','&#x1f918;','&#x1f919;',
 const kyocyo_kigou = ['&#x203c;','&#x2049;','&#x2757;']
 //‼,⁉
 
+const ng_word_list=['AV','セックス','童貞','風俗']
 let wordLists = [yorokobi_tango, kanasimi_tango, ikari_tango, kurui_tango, odoroki_tango, nayami_tango];
 let emojiLists = [yorokobi_emoji, kanasimi_emoji, ikari_emoji, kurui_emoji, odoroki_emoji, nayami_tango];
 let emojiOthers = [good_hand, kyocyo_kigou];
@@ -115,9 +118,45 @@ function setHashEmoji(transcript, tangos){
 
       let res = arr[Math.floor(Math.random() * num)];
       console.log(transcript.indexOf(key));
+      found_word = key;
+      console.log(key);
+      found_index = transcript.indexOf(key)+key.length;
       return res
     }
   }
+}
+
+//文字列に挿入する関数
+function strIns(str, idx, val){
+  var res = str.slice(0, idx) + val + str.slice(idx);
+  return res;
+}
+
+//絵文字に変換できるワードを返す関数
+function emojiWord(transcript, tangos){
+  let reultText;
+  for(const key of Object.keys(tangos)){
+    const regex = new RegExp(key);
+    if (regex.test(transcript)){
+      
+      var arr = Array.from(tangos[key]);
+      var num = arr.length;
+      console.log(Math.floor(Math.random() * num));
+
+      let res = arr[Math.floor(Math.random() * num)];
+      console.log(transcript.indexOf(key));
+      return key
+    }
+  }
+}
+
+function changeNG(transcript){
+  result=transcript
+  ng_word_list.forEach(function( value ) {
+    result=result.replace(value,'✋');
+    console.log("ng");
+  });
+  return result
 }
 
 //後でクロージャーにしたい
@@ -144,6 +183,8 @@ function searchTango(transcript, wordLists, emojiLists, tangos, neko_flag){
   return emoji;
 }
 
+
+
 //クソコード(破壊的)
 function judgeNekoMode(transcript){
   const neko = new RegExp('猫');
@@ -165,11 +206,14 @@ function searchFinishWord(transcript, word_list){
   return false;
 }
 
+
+
 recognition.onresult = (event) => {
 
   let transcript;
   let emoji_res;
   let emoji;
+  let result;
   for (let i = event.resultIndex; i < event.results.length; i++) {
     transcript = event.results[i][0].transcript;
     console.log(event.results[i].isFinal);
@@ -190,11 +234,29 @@ recognition.onresult = (event) => {
         const num = Math.floor(Math.random() * emojiOthers.length);
         const num2 = Math.floor(Math.random() * emojiOthers[num].length);
         emoji = emojiOthers[num][num2];
-      }
-      var num = Math.floor(Math.random()*(5-1)+1);
-      emoji_res = emoji.repeat(num);
-      let result = transcript + emoji_res;
+        const num3 = Math.floor(Math.random()*(5-1)+1);
+        emoji_res = emoji.repeat(num3);
+        //絵文字がなかった場合は最後に加える
+        result = transcript + emoji_res;
 
+      }else{
+        var num = Math.floor(Math.random()*(3-1)+1);
+        emoji_res = emoji.repeat(num);
+        //result = transcript + emoji_res;
+        result = strIns(transcript, found_index,emoji_res);
+      }
+      //絵文字になる単語が見つかったらその単語を返す
+      //返した単語に対してindexofを行う->pos_emoji
+      //transcriptのpos_emojiまでを切り取り絵文字をくっつけたものと
+      //pos_emojiから後ろの部分の文をつくる
+      //繰り返す
+      //絵文字がなかった場合は終了
+
+      //setHashで絵文字一つ一つが文に入っているかを調べている
+      //よってみつけるたびに絵文字を挿入すればよい？
+      //文の最後に加える
+      //let result = transcript + emoji_res;
+      result = changeNG(result);
       resRes.innerHTML = result;
       let moji_count = transcript.length+num;
       console.log((transcript.length+num));
