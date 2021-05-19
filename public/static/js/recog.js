@@ -4,6 +4,7 @@ const resRes = document.querySelector('#span-res');
 let finalTranscript = ''; // 確定した(黒の)認識結果
 let neko_flag = false;
 let finish_flag = false;
+let anime_flag = false;
 
 const finish_word = ['終了','妹オフ','いいのオフ','芋オフ','いーもオフ','えもオフ','えーもオフ','えーオフ','イーオフ','フィニッシュ','終わり'];
  
@@ -170,6 +171,7 @@ recognition.onresult = (event) => {
   let transcript;
   let emoji_res;
   let emoji;
+  
   for (let i = event.resultIndex; i < event.results.length; i++) {
     transcript = event.results[i][0].transcript;
     console.log(event.results[i].isFinal);
@@ -195,29 +197,35 @@ recognition.onresult = (event) => {
       emoji_res = emoji.repeat(num);
       let result = transcript + emoji_res;
 
-      resRes.innerHTML = result;
+      //animationが動いている時は、現在の文字に付け足す
+      if (anime_flag){
+        resRes.innerHTML += result;
+      }else{
+        resRes.innerHTML = result;
+      }
       let moji_count = transcript.length+num;
+      console.log(resRes.clientWidth);
       console.log((transcript.length+num));
       //取得した文字数
-      if(moji_count >= 12){
-        $('#span-res').addClass("animation");
-        $('#span-res').css('padding-left','100%');
+      // if(moji_count >= 12){
+      //   $('#span-res').addClass("animation");
+      //   $('#span-res').css('padding-left','100%');
 
-        // if(moji_count >= 12 && moji_count < 16){
-        //   $(".animation").animate( { duration: 10000, easing: 'linear' } );
-        // }else if(moji_count >= 16 && moji_count < 20){
-        //   $(".animation").animate( { duration: 14000, easing: 'linear' } );
-        // }else if(moji_count >= 20 && moji_count < 27){
-        //   $(".animation").animate({ duration: 22000, easing: 'linear' } );
-        // }else if(moji_count >= 27 && moji_count < 33){
-        //   $(".animation").animate({ duration: 29000, easing: 'linear' } );
-        // }else if(moji_count >= 33 && moji_count < 37){
-        //   $(".animation").animate({ duration: 36000, easing: 'linear' } );
-        // }else if(moji_count >= 37 && moji_count < 42){
-        //   $(".animation").animate( { duration: 42000, easing: 'linear' } );
-        // }else{
-        //   $(".animation").animate({ duration: 50000, easing: 'linear' } );
-        // }
+      //   if(moji_count >= 12 && moji_count < 16){
+      //     $(".animation").animate( { duration: 10000, easing: 'linear' } );
+      //   }else if(moji_count >= 16 && moji_count < 20){
+      //     $(".animation").animate( { duration: 14000, easing: 'linear' } );
+      //   }else if(moji_count >= 20 && moji_count < 27){
+      //     $(".animation").animate({ duration: 22000, easing: 'linear' } );
+      //   }else if(moji_count >= 27 && moji_count < 33){
+      //     $(".animation").animate({ duration: 29000, easing: 'linear' } );
+      //   }else if(moji_count >= 33 && moji_count < 37){
+      //     $(".animation").animate({ duration: 36000, easing: 'linear' } );
+      //   }else if(moji_count >= 37 && moji_count < 42){
+      //     $(".animation").animate( { duration: 42000, easing: 'linear' } );
+      //   }else{
+      //     $(".animation").animate({ duration: 50000, easing: 'linear' } );
+      //   }
 
         //速さを変更
         if(moji_count >= 12 && moji_count < 16){
@@ -233,31 +241,36 @@ recognition.onresult = (event) => {
         }else{
           $(".animation").animate({ duration: 50000, easing: 'linear' } );
         }
+        anime_flag = true;
       }else{
         $('#span-res').removeClass("animation");
         $('#span-res').css('padding-left','0%');
+        anime_flag = false;
       }
 
     } else {
       //interimTranscript = transcript;
       //transcript = "~~~~~~~~~~";
-      emoji_res = "";
-      $('#span-res').removeClass("animation");
-      $('#span-res').css('padding-left','0%');
-      resRes.innerHTML = "";
     }
   }
-
-  // document.getElementById("result-div").animation-duration = 0;
   console.log(transcript);
 } 
 
-
+//animation終了時に文字を消す
+resRes.addEventListener('animationend', () => {
+  // アニメーション終了後に実行する内容
+  emoji_res = "";
+  $('#span-res').removeClass("animation");
+  $('#span-res').css('padding-left','0%');
+  resRes.innerHTML = "";
+  anime_flag = false;
+})
 
 recognition.start();
 //永続化(SSL化すれば、マイク入力許可なしでいけるらしい)
 recognition.onend = () =>
 {
+  console.log("onend");
   recognition.start();
 
   if (finish_flag){
