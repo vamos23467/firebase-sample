@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "sample-4b0a6"
+    "default": "sample-4b0a6",
+    "develop" :"fir-emoji-test"
   }
 }
