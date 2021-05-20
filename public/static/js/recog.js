@@ -76,7 +76,7 @@ const good_hand = ['&#x1f44c;','&#x1f91f;','&#x1f918;','&#x1f919;',
 const kyocyo_kigou = ['&#x203c;','&#x2049;','&#x2757;']
 //‼,⁉
 
-const ng_word_list=['AV','セックス','童貞','風俗']
+const ng_word_list=['AV','セックス','童貞','風俗','おしっこ','うんち','エッチ']
 let wordLists = [yorokobi_tango, kanasimi_tango, ikari_tango, kurui_tango, odoroki_tango, nayami_tango];
 let emojiLists = [yorokobi_emoji, kanasimi_emoji, ikari_emoji, kurui_emoji, odoroki_emoji, nayami_tango];
 let emojiOthers = [good_hand, kyocyo_kigou];
@@ -124,6 +124,29 @@ function setHashEmoji(transcript, tangos){
       return res
     }
   }
+}
+
+//文字列に直接絵文字を挿入する関数
+function directHashEmoji(transcript, tangos){
+  let reultText;
+  for(const key of Object.keys(tangos)){
+    const regex = new RegExp(key);
+    if (regex.test(transcript)){
+      
+      var arr = Array.from(tangos[key]);
+      var num = arr.length;
+      console.log(Math.floor(Math.random() * num));
+
+      let res = arr[Math.floor(Math.random() * num)];
+      console.log(transcript.indexOf(key));
+      found_word = key;
+      console.log(key);
+      found_index = transcript.indexOf(key)+key.length;
+      transcript = strIns(transcript, found_index,res);
+      //return res
+    }
+  }
+  return transcript
 }
 
 //文字列に挿入する関数
@@ -181,6 +204,28 @@ function searchTango(transcript, wordLists, emojiLists, tangos, neko_flag){
     emoji = neko_kao[Math.floor(Math.random() * neko_kao.length)];
   }
   return emoji;
+}
+
+function insertTango(transcript, wordLists, emojiLists, tangos, neko_flag){
+  //judge neko mode(default false)
+  let script="";
+  if(!neko_flag){
+    let i = 0;
+    for (const word of wordLists) {
+      emoji =  setEmoji(transcript, word, emojiLists[i]);
+      if (emoji){
+        transcript=transcript+emoji;
+      }
+      i++;
+    }
+
+    script = directHashEmoji(transcript, tangos);
+    
+    console.log("script is returned" + script);
+  } else {
+    script =transcript + neko_kao[Math.floor(Math.random() * neko_kao.length)];
+  }
+  return script;
 }
 
 
@@ -243,7 +288,8 @@ recognition.onresult = (event) => {
         var num = Math.floor(Math.random()*(3-1)+1);
         emoji_res = emoji.repeat(num);
         //result = transcript + emoji_res;
-        result = strIns(transcript, found_index,emoji_res);
+        //result = strIns(transcript, found_index,emoji_res);
+        result = insertTango(transcript, wordLists, emojiLists, tangos, neko_flag);
       }
       //絵文字になる単語が見つかったらその単語を返す
       //返した単語に対してindexofを行う->pos_emoji
