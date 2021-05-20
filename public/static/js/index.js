@@ -20,7 +20,7 @@ var textUpdateTimeoutID = 0;
 var textUpdateTimeoutSecond = 30;
 var start_flag = false;
 
-const start_tango = ['いいも','スタート','妹','すたーと','今','いいの','いいよ','芋','いーも','良いも','いいね','えーも'];
+const start_tango = ['いい','うーも','ウーモ','スタート','妹','すたーと','今','いいの','いいも','芋','いーも','良いも','いいね','えーも'];
 
 function searchStartWord(transcript, word_list){
   for (const key of word_list) {
