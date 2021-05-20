@@ -29,8 +29,8 @@ body {
     margin:0;
     display : inline-block;
     white-space : nowrap;
-    overflow: hidden;
-    line-height: 1.4;   
+    overflow: visible;
+    line-height: 1.4;
 }
 
 .animation {

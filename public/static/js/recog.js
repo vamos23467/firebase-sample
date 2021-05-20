@@ -76,7 +76,7 @@ const good_hand = ['&#x1f44c;','&#x1f91f;','&#x1f918;','&#x1f919;',
 const kyocyo_kigou = ['&#x203c;','&#x2049;','&#x2757;']
 //‼,⁉
 
-const ng_word_list=['AV','セックス','童貞','風俗']
+const ng_word_list=['AV','セックス','童貞','風俗','無修正','エッチ','チンコ']
 let wordLists = [yorokobi_tango, kanasimi_tango, ikari_tango, kurui_tango, odoroki_tango, nayami_tango];
 let emojiLists = [yorokobi_emoji, kanasimi_emoji, ikari_emoji, kurui_emoji, odoroki_emoji, nayami_tango];
 let emojiOthers = [good_hand, kyocyo_kigou];
@@ -258,68 +258,85 @@ recognition.onresult = (event) => {
       //let result = transcript + emoji_res;
       result = changeNG(result);
       resRes.innerHTML = result;
-      let moji_count = transcript.length+num;
-      console.log((transcript.length+num));
-      //取得した文字数
-      if(moji_count >= 12){
-        $('#span-res').addClass("animation");
-        $('#span-res').css('padding-left','100%');
-
-        // if(moji_count >= 12 && moji_count < 16){
-        //   $(".animation").animate( { duration: 10000, easing: 'linear' } );
-        // }else if(moji_count >= 16 && moji_count < 20){
-        //   $(".animation").animate( { duration: 14000, easing: 'linear' } );
-        // }else if(moji_count >= 20 && moji_count < 27){
-        //   $(".animation").animate({ duration: 22000, easing: 'linear' } );
-        // }else if(moji_count >= 27 && moji_count < 33){
-        //   $(".animation").animate({ duration: 29000, easing: 'linear' } );
-        // }else if(moji_count >= 33 && moji_count < 37){
-        //   $(".animation").animate({ duration: 36000, easing: 'linear' } );
-        // }else if(moji_count >= 37 && moji_count < 42){
-        //   $(".animation").animate( { duration: 42000, easing: 'linear' } );
-        // }else{
-        //   $(".animation").animate({ duration: 50000, easing: 'linear' } );
-        // }
-
-        //速さを変更
-        if(moji_count >= 12 && moji_count < 16){
-          $(".animation").animate( { duration: 12000, easing: 'linear' } );
-        }else if(moji_count >= 16 && moji_count < 20){
-          $(".animation").animate( { duration: 16000, easing: 'linear' } );
-        }else if(moji_count >= 20 && moji_count < 27){
-          $(".animation").animate({ duration: 27000, easing: 'linear' } );
-        }else if(moji_count >= 27 && moji_count < 33){
-          $(".animation").animate({ duration: 33000, easing: 'linear' } );
-        }else if(moji_count >= 33 && moji_count < 37){
-          $(".animation").animate({ duration: 43000, easing: 'linear' } );
-        }else{
-          $(".animation").animate({ duration: 50000, easing: 'linear' } );
-        }
+      //animationが動いている時は、現在の文字に付け足す
+      if (anime_flag){
+        const newSpan = document.createElement("span");
+        newSpan.innerHTML = result;
+		    resText.appendChild(newSpan);
+        newSpan.classList.add("new-span");
+        newSpan.classList.add("animation");
       }else{
+        $('span').remove()
+        resRes.innerHTML = result;
+        //初期化
         $('#span-res').removeClass("animation");
         $('#span-res').css('padding-left','0%');
       }
+      let moji_count = transcript.length+num;
+      console.log(resRes.clientWidth);
+      console.log((transcript.length+num));
+      //取得した文字数
+      if(moji_count >= 12 && !anime_flag){
+        $('#span-res').addClass("animation");
+        $('#span-res').css('padding-left','100%');
 
-    } else {
+        //速さを変更
+        if(moji_count >= 12 && moji_count < 16){
+          $(".animation").animate( { duration: 12000, easing: 'linear',queue: true  } );
+        }else if(moji_count >= 16 && moji_count < 20){
+          $(".animation").animate( { duration: 16000, easing: 'linear',queue: true  } );
+        }else if(moji_count >= 20 && moji_count < 27){
+          $(".animation").animate({ duration: 27000, easing: 'linear',queue: true  } );
+        }else if(moji_count >= 27 && moji_count < 33){
+          $(".animation").animate({ duration: 33000, easing: 'linear' ,queue: true } );
+        }else if(moji_count >= 33 && moji_count < 37){
+          $(".animation").animate({ duration: 43000, easing: 'linear',queue: true  } );
+        }else{
+          $(".animation").animate({ duration: 50000, easing: 'linear',queue: true  } );
+        }
+        anime_flag = true;
+      }else{
+        if (anime_flag){
+        }else{
+          $('span').remove()
+          $('#span-res').removeClass("animation");
+          $('#span-res').css('padding-left','0%');
+          anime_flag = false;
+        }
+      }
+  }else{
+    // $('#span-res').removeClass("animation");
+    // $('#span-res').css('padding-left','0%');
+    // anime_flag = false;
+    if(transcript.length >= 13 && !anime_flag){
+      resRes.innerHTML = '<i style="color:#ddd;">' + transcript + '</i>';
       //interimTranscript = transcript;
       //transcript = "~~~~~~~~~~";
-      emoji_res = "";
-      $('#span-res').removeClass("animation");
-      $('#span-res').css('padding-left','0%');
-      resRes.innerHTML = "";
     }
   }
-
-  // document.getElementById("result-div").animation-duration = 0;
   console.log(transcript);
+  }
 } 
 
-
+//animation終了時に文字を消す
+resRes.addEventListener('animationend', () => {
+  // アニメーション終了後に実行する内容
+  if (resText.hasChildNodes() && anime_flag){
+    $(".animation").animate( { duration: 12000, easing: 'linear',queue: true } );
+	}else if(resText.hasChildNodes() && !anime_flag){
+    $('span').remove();
+  }
+  console.log("animation end");
+  $('#span-res').css('padding-left','30%');
+  emoji_res = "";
+  anime_flag = false;
+})
 
 recognition.start();
 //永続化(SSL化すれば、マイク入力許可なしでいけるらしい)
 recognition.onend = () =>
 {
+  console.log("onend");
   recognition.start();
 
   if (finish_flag){
