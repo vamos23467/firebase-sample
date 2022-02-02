@@ -1,7 +1,0 @@
-{
-  "projects": {
-    "default": "sample-4b0a6",
-    "develop": "fir-emoji-test",
-    "firebase use": "fir-emoji-test"
-  }
-}
